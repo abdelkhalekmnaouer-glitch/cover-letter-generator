@@ -1,24 +1,23 @@
 import streamlit as st
-from openai import OpenAI
+from groq import Groq
 from utils.pdf_generator import create_pdf
 
-st.set_page_config(page_title="AI Cover Letter Generator", layout="centered")
+st.set_page_config(page_title="AI Cover Letter Generator (Free)", layout="centered")
 
-# Load your base model
+# Load user profile model
 with open("cover_letter_model.txt", "r") as f:
     base_profile = f.read()
 
-st.title("📄 AI Cover Letter Generator")
-st.write("Paste a job offer and automatically generate a personalized cover letter.")
+st.title("📄 Free AI Cover Letter Generator (Groq)")
+st.write("Paste a job offer and generate a tailored cover letter using the free Groq API.")
 
-# OpenAI client
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Groq Client
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-# UI input
 job_description = st.text_area("Job Description", height=250, placeholder="Paste the job offer here...")
 
 tone = st.selectbox(
-    "Choose tone:",
+    "Select the tone:",
     ["Professional", "Friendly", "Confident", "Enthusiastic"]
 )
 
@@ -26,10 +25,10 @@ if st.button("Generate Cover Letter"):
     if not job_description:
         st.error("Please paste a job description.")
     else:
-        with st.spinner("AI is generating your personalized cover letter..."):
+        with st.spinner("Generating your cover letter using LLaMA-3-70B (Free)..."):
 
             prompt = f"""
-            You are a professional cover letter writer.
+            Write a 1-page cover letter based on the user's profile and the job description.
 
             USER PERSONAL MODEL:
             {base_profile}
@@ -37,13 +36,16 @@ if st.button("Generate Cover Letter"):
             JOB DESCRIPTION:
             {job_description}
 
-            Write a 1-page cover letter in a {tone.lower()} tone.
-            Tailor the letter to the job description while maintaining the user's identity and style.
-            Format it as a real business letter with paragraphs and good structure.
+            Requirements:
+            - Tone: {tone.lower()}
+            - Professional formatting
+            - Clear structure
+            - Tailored to job
+            - Keep it concise and business-appropriate
             """
 
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="llama3-70b-8192",
                 messages=[{"role": "user", "content": prompt}]
             )
 
@@ -61,6 +63,3 @@ if st.button("Generate Cover Letter"):
                 file_name="cover_letter.pdf",
                 mime="application/pdf"
             )
-
-
-
