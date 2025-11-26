@@ -27,27 +27,26 @@ if st.button("Generate Cover Letter"):
     else:
         with st.spinner("Generating your cover letter using LLaMA-3-70B (Free)..."):
 
-            prompt = f"""
-            Write a 1-page cover letter based on the user's profile and the job description.
+            pprompt = f"""
+Write a 1-page cover letter with the following guidelines:
 
-            USER PERSONAL MODEL:
-            {base_profile}
+USER PERSONAL MODEL:
+{base_profile}
 
-            JOB DESCRIPTION:
-            {job_description}
+JOB DESCRIPTION:
+{job_description}
 
-            Requirements:
-            - Tone: {tone.lower()}
-            - Professional formatting
-            - Clear structure
-            - Tailored to job
-            - Keep it concise and business-appropriate
-            """
+Tone: {tone.lower()}
+Format: Business letter, clear paragraphs, concise.
+"""
 
             response = client.chat.completions.create(
-                model="llama3-8b-8192",
-                messages=[{"role": "user", "content": prompt}]
-            )
+    model="llama3-8b-8192",
+    messages=[
+        {"role": "user", "content": prompt}
+    ]
+)
+
 
             cover_letter = response.choices[0].message["content"]
 
@@ -63,5 +62,6 @@ if st.button("Generate Cover Letter"):
                 file_name="cover_letter.pdf",
                 mime="application/pdf"
             )
+
 
 
