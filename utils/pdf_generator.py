@@ -7,21 +7,19 @@ def create_pdf(text):
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    # Path to UTF-8 font
-    font_path = os.path.join(os.path.dirname(__file__), "DejaVuSans.ttf")
+    # Path to Arial TTF
+    font_path = os.path.join(os.path.dirname(__file__), "Arial.ttf")
 
-    # Register UTF-8 safe font
-    pdf.add_font("DejaVu", "", font_path, uni=True)
-    pdf.set_font("DejaVu", size=12)
+    # Add Unicode-safe Arial
+    pdf.add_font("ArialUnicode", "", font_path, uni=True)
+    pdf.set_font("ArialUnicode", size=12)
 
-    # Add text
+    # Write the content
     for line in text.split("\n"):
         pdf.multi_cell(0, 10, line)
 
-    # Output PDF to bytes
+    # Export to buffer
     buffer = BytesIO()
     pdf.output(buffer)
     buffer.seek(0)
-    return buffer
-
     return buffer
