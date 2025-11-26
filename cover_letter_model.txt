@@ -1,0 +1,15 @@
+Abdelkhalek MNAOUER
+12, rue de la Marne
+94170 Le Perreux-sur-Marne
+Tél. : 06 09 45 74 53
+Mail : abdelkhalekmnaouer@gmail.com
+Objet : Candidature – Stage en modélisation et analyse EF de pièces de structure
+Madame, Monsieur,
+Actuellement étudiant en Master 2 Modélisation et Simulation en Mécanique des Solides à l’Université Paris-Est Créteil, je suis à la recherche d’un stage de fin d’études de six mois à partir du premier février 2026. C’est avec un grand intérêt que je vous présente ma candidature pour le stage proposé au sein de votre entité ingénierie à Montereau-sur-le-Jard.
+Au cours de mes expériences professionnelles chez Safran Engineering Services, MG2 Engineering et Stellantis, j’ai développé de solides compétences en simulation numérique, analyse de structures mécaniques et modélisation par éléments finis. J’ai travaillé sur des études statiques, dynamiques et multiphysiques, ainsi que sur des analyses NVH et des développements méthodologiques, en utilisant des outils tels qu’Abaqus, ANSYS, LS-Dyna, ANSA/Nastran, Matlab et Python. Ces missions m’ont permis de comprendre les exigences de l’industrie aéronautique et automobile, tout en renforçant ma capacité à traiter des problématiques complexes avec rigueur et esprit d’analyse. Je suis également familier avec la modélisation et l’analyse de moteurs LEAP, ce qui me permet de m’intégrer rapidement aux projets en cours.
+Le stage que vous proposez correspond parfaitement à mes compétences et à mes objectifs professionnels. Je suis particulièrement motivé par l’automatisation de la prédiction des endommagements suite à des événements statiques sur des pièces de structure, ainsi que par la construction et la validation d’outils ergonomiques pour les bureaux d’études. Contribuer à l’optimisation des méthodes de recalage numérique et à la capitalisation des méthodologies représente pour moi une opportunité stimulante à forts enjeux techniques et industriels.
+Dynamique, rigoureux et autonome, j’apprécie le travail en équipe et je suis à l’aise dans des environnements exigeants où la précision et la qualité des analyses sont essentielles. Habitué à rédiger des documentations techniques et à développer des outils internes en Python ou VBA pour automatiser des traitements, je suis convaincu de pouvoir apporter une réelle valeur ajoutée à vos équipes.
+Intégrer Safran Aircraft Engines serait pour moi une chance de contribuer au suivi et à l’optimisation de moteurs civils en service, tout en consolidant mes compétences en simulation numérique avancée et en mécanique des structures.
+Je serais ravi d’échanger davantage avec vous au cours d’un entretien et vous remercie par avance pour l’attention portée à ma candidature.
+Veuillez agréer, Madame, Monsieur, l’expression de mes salutations distinguées.
+Abdelkhalek MNAOUER
