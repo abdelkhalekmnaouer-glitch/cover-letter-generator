@@ -21,37 +21,40 @@ tone = st.selectbox("Select tone:", ["Professional", "Friendly", "Confident", "E
 if st.button("Generate Cover Letter"):
     if not job_description:
         st.error("Please paste a job description.")
-    else:
-        with st.spinner("Generating..."):
+        st.stop()
 
-            prompt = (
-                "Write a 1-page professional cover letter.\n\n"
-                "PERSONAL MODEL:\n"
-                f"{base_profile}\n\n"
-                "JOB DESCRIPTION:\n"
-                f"{job_description}\n\n"
-                f"Tone: {tone.lower()}\n"
-                "Format: A business cover letter with 3–5 paragraphs.\n"
-            )
+    with st.spinner("Generating your cover letter..."):
 
-            # USE TEXT COMPLETION ENDPOINT (WORKS ON ALL ACCOUNTS)
-            response = client.completions.create(
-                model="gemma2-9b-it",
-                prompt=prompt,
-                max_tokens=800,
-                temperature=0.7,
-            )
+        prompt = (
+            "Write a 1-page professional cover letter.\n\n"
+            "PERSONAL MODEL:\n"
+            f"{base_profile}\n\n"
+            "JOB DESCRIPTION:\n"
+            f"{job_description}\n\n"
+            f"Tone: {tone.lower()}\n"
+            "Format: A business cover letter with clear paragraphs.\n"
+        )
 
-            cover_letter = response.choices[0].text
+        # ✅ FINAL WORKING GROQ CALL
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=800,
+            temperature=0.7
+        )
 
-            st.subheader("Generated Letter:")
-            st.write(cover_letter)
+        cover_letter = response.choices[0].message["content"]
 
-            pdf_bytes = create_pdf(cover_letter)
+        st.subheader("Generated Letter:")
+        st.write(cover_letter)
 
-            st.download_button(
-                "⬇️ Download PDF",
-                pdf_bytes,
-                "cover_letter.pdf",
-                "application/pdf",
-            )
+        pdf_bytes = create_pdf(cover_letter)
+
+        st.download_button(
+            "⬇️ Download PDF",
+            pdf_bytes,
+            "cover_letter.pdf",
+            "application/pdf",
+        )
