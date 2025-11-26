@@ -64,3 +64,4 @@ if st.button("Generate Cover Letter"):
                 mime="application/pdf"
             )
 
+
