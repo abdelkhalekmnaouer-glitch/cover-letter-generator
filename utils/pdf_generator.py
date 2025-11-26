@@ -4,11 +4,11 @@ import os
 import unicodedata
 import re
 
-# --- Utility to clean problematic unicode (emoji, zero-width, etc.) ---
+# --- CLEANING ---
 def clean_text(text):
     cleaned = "".join(
-        ch for ch in text 
-        if not unicodedata.category(ch).startswith("So")
+        ch for ch in text
+        if not unicodedata.category(ch).startswith("So")  # remove emojis
     )
     cleaned = cleaned.replace("\u200b", "")
     cleaned = cleaned.replace("\xa0", " ")
@@ -16,95 +16,117 @@ def clean_text(text):
     return cleaned
 
 
-class LetterPDF(FPDF):
+# --- PDF CLASS ULTRA FIDÈLE ---
+class UltraFidelePDF(FPDF):
     def __init__(self):
-        super().__init__(orientation='P', unit='mm', format='A4')
+        super().__init__(orientation="P", unit="mm", format="A4")
         self.set_auto_page_break(auto=True, margin=20)
         self.add_page()
+        self.set_margins(left=20, top=20, right=20)
 
-    def add_header_block(self, text, font_path):
-        # Upper-left coordinates block
+    def add_coordonnees(self, lines):
         self.set_xy(20, 20)
-        self.set_font("ArialUnicode", size=12)
-        for line in text.split("\n"):
-            self.cell(0, 6, line, ln=True)
+        self.set_font("ArialReg", size=11)
+        for line in lines:
+            self.cell(0, 6, line, ln=True)  # EXACT spacing 6 pts
 
-    def add_subject(self, subject, font_path):
-        self.ln(5)
-        self.set_font("ArialUnicode", style="B", size=12)
-        self.cell(0, 8, f"Objet : {subject}", ln=True)
-        self.ln(3)
+    def add_objet(self, text):
+        self.ln(4)  # espace avant objet
+        self.set_font("ArialBold", size=12)
+        self.cell(0, 8, f"Objet : {text}", ln=True)
+        self.ln(3)  # espace après objet
+
+    def add_salutation(self):
+        self.ln(2)
+        self.set_font("ArialReg", size=12)
+        self.cell(0, 8, "Madame, Monsieur,", ln=True)
+        self.ln(2)
 
     def add_paragraph(self, text):
-        self.set_font("ArialUnicode", size=12)
-        self.multi_cell(0, 8, text)
-        self.ln(3)
+        self.set_font("ArialReg", size=12)
+        self.multi_cell(0, 7, text)  # interligne contenu
+        self.ln(1.5)  # espacement après paragraphe
 
 
-def create_pdf(full_text):
-    # FONT PATH
-    font_path = os.path.join(os.path.dirname(__file__), "arial.ttf")
-    if not os.path.exists(font_path):
-        raise FileNotFoundError("arial.ttf not found in utils/ directory.")
+# --- GENERATE PDF ---
+def create_pdf(text):
+    # Clean text
+    text = clean_text(text)
 
-    # Clean text to avoid FPDF width errors
-    full_text = clean_text(full_text)
+    # Load fonts
+    base_dir = os.path.dirname(__file__)
+    font_reg = os.path.join(base_dir, "arial.ttf")
+    font_bold = os.path.join(base_dir, "arialbd.ttf")
 
-    # Split content according to expected structure
-    lines = full_text.strip().split("\n")
+    if not os.path.exists(font_reg):
+        raise FileNotFoundError("arial.ttf missing in utils/")
+    if not os.path.exists(font_bold):
+        raise FileNotFoundError("arialbd.ttf missing in utils/")
 
-    # Build blocks
-    header_lines = []
-    subject_line = ""
-    body_lines = []
+    pdf = UltraFidelePDF()
 
-    # Reconstruct intelligent structure:
-    # First 5 lines = coordinate block
-    # Line starting with "Objet" → subject
-    # Rest = paragraphs
+    # Register fonts
+    pdf.add_font("ArialReg", "", font_reg, uni=True)
+    pdf.add_font("ArialBold", "", font_bold, uni=True)
 
-    i = 0
-    # Coordinates (first non-empty 4–6 lines)
-    while i < len(lines) and lines[i].strip() != "":
-        header_lines.append(lines[i])
-        i += 1
+    # --- PARSE STRUCTURED LETTER ---
+    # The AI must return text using the tags:
+    # @@coordonnees, @@objet, @@salutation, @@p1, @@p2, @@p3, @@p4, @@signature
 
-    # Find subject
-    for j in range(i, len(lines)):
-        if lines[j].lower().startswith("objet"):
-            subject_line = lines[j].replace("Objet :", "").strip()
-            i = j + 1
-            break
+    sections = {
+        "coordonnees": [],
+        "objet": "",
+        "p": [],
+        "signature": "",
+    }
 
-    # Remaining = body paragraphs
-    body_lines = [line for line in lines[i:] if line.strip() != ""]
+    lines = text.split("\n")
+    current = None
 
-    # Generate PDF
-    pdf = LetterPDF()
+    for line in lines:
+        line = line.strip()
+        if line.startswith("@@coordonnees"):
+            current = "coordonnees"
+            continue
+        elif line.startswith("@@objet"):
+            current = "objet"
+            continue
+        elif line.startswith("@@p"):
+            m = re.match(r"@@p(\d+)", line)
+            if m:
+                current = "p"
+                continue
+        elif line.startswith("@@signature"):
+            current = "signature"
+            continue
 
-    # Register Arial UTF-8 font
-    pdf.add_font("ArialUnicode", "", font_path, uni=True)
-    pdf.set_font("ArialUnicode", size=12)
+        if current == "coordonnees" and line:
+            sections["coordonnees"].append(line)
 
-    # Add header block
-    pdf.add_header_block("\n".join(header_lines), font_path)
+        elif current == "objet":
+            if line:
+                sections["objet"] = line
 
-    # Add subject
-    pdf.add_subject(subject_line, font_path)
+        elif current == "p":
+            if line:
+                sections["p"].append(line)
 
-    # Add salutation (mandatory)
-    pdf.add_paragraph("Madame, Monsieur,")
+        elif current == "signature" and line:
+            sections["signature"] = line
 
-    # Add paragraphs
-    for para in body_lines:
-        pdf.add_paragraph(para)
+    # --- BUILD PDF ULTRA FIDÈLE ---
+    pdf.add_coordonnees(sections["coordonnees"])
+    pdf.add_objet(sections["objet"])
+    pdf.add_salutation()
 
-    # Final polite sentence if absent
-    # (Your generated text usually contains one but we ensure consistency)
-    if not body_lines[-1].lower().startswith("je vous remercie"):
-        pdf.add_paragraph("Je vous remercie pour l’attention portée à ma candidature.")
+    for paragraph in sections["p"]:
+        pdf.add_paragraph(paragraph)
 
-    # Output to bytes for Streamlit
+    # signature
+    if sections["signature"]:
+        pdf.add_paragraph(sections["signature"])
+
+    # Output
     buffer = BytesIO()
     pdf.output(buffer)
     buffer.seek(0)
