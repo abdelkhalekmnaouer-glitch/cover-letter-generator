@@ -45,7 +45,7 @@ if st.button("Generate Cover Letter"):
             temperature=0.7
         )
 
-        cover_letter = response.choices[0].message["content"]
+        cover_letter = response.choices[0].message.content
 
         st.subheader("Generated Letter:")
         st.write(cover_letter)
@@ -58,3 +58,4 @@ if st.button("Generate Cover Letter"):
             "cover_letter.pdf",
             "application/pdf",
         )
+
