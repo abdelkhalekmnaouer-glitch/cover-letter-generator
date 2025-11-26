@@ -12,7 +12,7 @@ st.title("📄 AI Cover Letter Generator")
 st.write("Paste a job offer and automatically generate a personalized cover letter.")
 
 # OpenAI client
-client = OpenAI(api_key=st.secrets["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"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # UI input
 job_description = st.text_area("Job Description", height=250, placeholder="Paste the job offer here...")
@@ -61,4 +61,5 @@ if st.button("Generate Cover Letter"):
                 file_name="cover_letter.pdf",
                 mime="application/pdf"
             )
+
 
