@@ -8,7 +8,7 @@ def create_pdf(text):
     pdf.add_page()
 
     # Path to Arial TTF
-    font_path = os.path.join(os.path.dirname(__file__), "arial.ttf")
+    font_path = os.path.join(os.path.dirname(__file__), "Arial.ttf")
 
     # Add Unicode-safe Arial
     pdf.add_font("ArialUnicode", "", font_path, uni=True)
